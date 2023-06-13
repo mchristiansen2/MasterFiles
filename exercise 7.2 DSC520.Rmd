@@ -1,0 +1,75 @@
+---
+title: "exercises7.2_dsc520"
+author: "Madison Christiansen"
+date: "2023-01-27"
+output: pdf_document
+---
+```{r}
+library(tidyverse)
+library(ppcor)
+```
+```{r}
+## Set the working directory to the root of your DSC 520 directory
+setwd("/Users/madisonchristiansen/desktop")
+## Load the `data/r4ds/heights.csv` to
+survey_df <- read.csv("student-survey.csv")
+```
+
+# Student Survey
+# i. Use R to calculate the covariance of the Survey variables and provide an explanation of why you would use this calculation and what the results indicate.
+```{r}
+cov(survey_df)
+```
+## Since the covariance is an important metric to compare relationships between multiple variables this is a good way to investigate the question being asked. The results show us the covariance between the variables and if it is positive or negative. You can see that the TimeReading and Happiness can be predicted to have a negative covariance, because if more time is spent reading then less would be spent watching tv and vice versa.
+
+# ii. Examine the Survey data variables. What measurement is being used for the variables? Explain what effect changing the measurement being used for the variables would have on the covariance calculation. Would this be a problem? Explain and provide a better alternative if needed.
+## The data within the survey is in different formats, with one column containing two decimals and the other with three and another with none. Are the reading and tv columns measured in hours or a different type of time measurement? The happiness column could be measured in percentages although there is no specification. This can cause issues if the same matrix is not being used. If you wanted to make a change rounding the decimal places to match up the Happiness and TimeTV category. Changing the measurements would impact the numbers although the direction (positive or negative) would be the same. The numerical value of covariance does not have a significance although the direction does.
+
+# iii. Choose the type of correlation test to perform, explain why you chose this test, and make a prediction if the test yields a positive or negative correlation?
+## Using Pearson’s correlation test gives a good understanding of the data. I used this because based on the question asked, we can find the degree of the relationship between the linearly related variables. Depending on the variables you can probably see both positive and negative relations. For example, the TimeReading is a lot less than the TimeTV which could produce mostly negative relations for this variable.
+
+# iv. Perform a correlation analysis of:
+## 1. All variables
+```{r}
+cor(survey_df)
+```
+
+## 2. A single correlation between two a pair of the variables
+```{r}
+cor(survey_df$TimeReading, survey_df$TimeTV)
+```
+
+## 3. Repeat your correlation test in step 2 but set the confidence interval at 99%
+```{r}
+cor.test(survey_df$TimeReading, survey_df$TimeTV, conf.level = 0.99)
+```
+
+## 4. Describe what the calculations in the correlation matrix suggest about the relationship between the variables. Be specific with your explanation.
+## When looking at the correlation matrix you can see that when the variables are relating to themselves, they are at 1.0. The TimeReading variable has a negative relation to all the other variables. TimeTV has a positive correlation to the Happiness and Gender variables. Along with this like mentioned Happiness and Gender have a positive correlation to all except the TimeReading variable.This can suggest many things. For example, the TimeReading having a negative correlation means that the more time spent on this the less on tv and can contribute to less happiness.
+# v. Calculate the correlation coefficient and the coefficient of determination, describe what you conclude about the results.
+```{r}
+## correlation coefficient and coefficient of determination
+cor(survey_df)^2
+cor(survey_df$TimeReading, survey_df$TimeTV)^2
+```
+## With the time spent reading and spent watching tv you see a significant correlation of -0.88306768, this negative correlation confirms what we assumed. You can see that when looking at the reading and tv time the coefficient of determination is at 0.7798085. With this number being close to 80% you can say of the variation in the dependent variable is explained by our model.
+
+# vi. Based on your analysis can you say that watching more TV caused students to read less? Explain.
+## Yes, based on the correlation being negative with each other. The time spent reading and watching tv are moving in opposite directions
+
+# vii. Pick three variables and perform a partial correlation, documenting which variable you are “controlling”. Explain how this changes your interpretation and explanation of the results.
+```{r}
+## partial correlation
+pcor.test(x=survey_df$TimeReading, y=survey_df$TimeTV, z=survey_df$Happiness)
+```
+
+## Happiness is controlled here. The results do not change my interpretation that much. Time tv accounts reading about the same as above with happiness being controlled.
+
+
+
+
+
+
+
+
+

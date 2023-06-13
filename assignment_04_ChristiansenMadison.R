@@ -36,7 +36,7 @@ ggplot(heights_df, aes(race)) + geom_bar() + coord_flip()
 covid_df <- read.csv("us-states.csv")
 
 ## Parse the date column using `as.Date()``
-as.Date(covid_df$date
+covid_df$date <- as.Date()
 
 ## Create three dataframes named `california_df`, `ny_df`, and `florida_df`
 ## containing the data from California, New York, and Florida
