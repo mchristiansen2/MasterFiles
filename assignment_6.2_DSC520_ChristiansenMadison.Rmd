@@ -1,0 +1,115 @@
+---
+title: "Assignement_04_Christiansen_520"
+author: "Madison Christiansen"
+date: "2023-01-19"
+output: 
+  word_document: default
+  html_document: default
+  pdf_document: default
+#bibliography: bibliography.bib
+---
+# Markdown Basics
+## Favorite Foods
+
+1. Bread
+2. Cheese
+3. Chips
+
+## Images
+![All Cases (Log Plot)](/Users/madisonchristiansen/desktop/10-all-cases-log.png)
+
+## Add a Quote
+My mom once said:
+
+"How about... 'Everything will be okay in the end. If its not okay, its not the end.- John Lennon'"
+
+## Add an Equation
+$equation$
+$$ 2+2=4 $$
+
+## Add a Footnote
+This is a footnote.
+^[Footnote in R Markdown]
+
+## Add Citations
+* R for Everyone
+    + @book{lander2014r,
+  title={R for Everyone: Advanced Analytics and Graphics},
+  author={Lander, J.P.},
+  isbn={9780321888037},
+  lccn={2013027407},
+  series={Addison-Wesley data and analytics series},
+  url={https://books.google.com/books?id=3eBVAgAAQBAJ},
+  year={2014},
+  publisher={Addison-Wesley}
+}
+* Discovering Statistics Using R
+    + @book{field2012discovering,
+  title={Discovering Statistics Using R},
+  author={Field, A. and Miles, J. and Field, Z.},
+  isbn={9781446258460},
+  url={https://books.google.com/books?id=wd2K2zC3swIC},
+  year={2012},
+  publisher={SAGE Publications}
+}
+# Inline Code
+```{r, include=FALSE}
+library(ggplot2)
+setwd("/Users/madisonchristiansen/desktop")
+
+covid_df <- read.csv("us-states.csv")
+california_df <- covid_df[ which( covid_df$state == "California"), ]
+ny_df <- covid_df[ which( covid_df$state == "New York"), ]
+florida_df <- covid_df[ which( covid_df$state == "Florida"), ]
+```
+
+## NY Times COVID-19 Data
+```{r, echo=FALSE}
+ ggplot(data=covid_df, aes(x=date, group=1)) +
+  geom_line(aes(y = cases, colour = "Florida")) +
+  geom_line(data=ny_df, aes(y = cases,colour="New York")) +
+  geom_line(data=california_df, aes(y = cases, colour="California")) +
+  scale_colour_manual("",
+                      breaks = c("California", "New York", "Florida"),
+                      values = c("Dark red", "Dark green", "Steel blue")) + 
+  xlab(" ") + ylab("Cases") + scale_y_log10()
+```
+
+## R4DS Height vs Earnings
+```{r, echo=FALSE}
+heights_df <- read.csv("heights.csv")
+ggplot(heights_df, aes(x=height, y=earn)) + geom_point() + geom_smooth()
+```
+
+# Tables
+## Knitr Table with Kable
+```{r}
+library(knitr)
+name <- c("Aragon", "Bilbo", "Frodo", "Galadriel", "Sam", "Gandalf", "Legolas", "Sauron", "Gollum")
+race <- c("Men", "Hobbit", "Hobbit", "Elf", "Hobbit", "Maia", "Elf", "Maia", "Hobbit")
+in_fellowship <- c(TRUE, FALSE, TRUE, FALSE, TRUE, TRUE, TRUE, FALSE, FALSE)
+ring_bearer <- c(FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE)
+age <- c(88, 129, 51, 7000, 36, 2019, 2931, 7052, 589)
+characters_df <- data.frame(name, race, in_fellowship, ring_bearer, age)
+characters_df
+knitr::kable(characters_df, "pipe", col.name=c("Name", "Race", "InFellowship", "RingBearer", "Age"), caption = "One Ring to Rule Them All")
+```
+
+## Pandoc Grid Table
+```{r}
+library(pander)
+pander::pander(characters_df, style='grid')
+```
+
+# References
+
+render("assignment_6.2_DSC520_ChristiansenMadison.Rmd", output_format= "word_document")
+
+
+
+
+
+
+
+
+
