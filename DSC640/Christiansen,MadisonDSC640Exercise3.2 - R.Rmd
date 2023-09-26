@@ -1,0 +1,41 @@
+---
+title: "Christiansen,MadisonDSC640Exercise3.2 - R"
+author: "Madison Christiansen"
+date: "2023-07-03"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup}
+library(ggplot2)
+df <- read.csv(file="/Users/madisonchristiansen/Desktop/crimerates-by-state-2005.csv")
+```
+
+## Scatterplot
+
+```{r}
+ggplot(df, aes(x = murder, y = burglary, label = state)) +
+  geom_point() +
+  geom_text(vjust = -0.5) +
+  labs(x = "Murder", y = "Burglary", title = "Scatterplot")
+```
+
+## Bubble Chart
+```{r}
+plot(df$murder, df$burglary, 
+     pch = 21, bg = "pink", cex = df$robbery/10, 
+     xlab = "Murder", ylab = "Burglary", 
+     main = "Bubble Chart")
+
+# Add labels to each bubble
+text(df$murder, df$burglary, labels = df$state, pos = 3)
+```
+
+## Density Plot Chart
+```{r}
+ggplot(df, aes(x = murder)) +
+  geom_density(fill = "pink", alpha = 0.5) +
+  labs(x = "Murder", y = "Density", title = "Density Plot")
+```
+

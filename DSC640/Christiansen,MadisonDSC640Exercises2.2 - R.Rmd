@@ -1,0 +1,41 @@
+---
+title: "Christiansen,MadisonDSC640Exercise2.2 - R"
+author: "Madison Christiansen"
+date: "2023-06-20"
+output:
+  pdf_document: default
+  word_document: default
+---
+## Exercise 2.2 R
+### 1 tree map, 1 area chart, 1 stacked area chart, and 1 step chart using R
+```{r setup}
+library(treemap)
+library(ggplot2)
+df <- read.csv(file="/Users/madisonchristiansen/Desktop/unemployement-rate-1948-2010.csv")
+```
+
+### Tree Map
+```{r}
+treemap <- treemap(df, index = c("Year", "Period", "Series.id"),
+        vSize = "Value",
+        type = "index")
+```
+
+### Area Chart
+```{r}
+ggplot(df, aes(x = Year, y = Value, fill = Year)) +
+  geom_area()
+```
+
+### Stacked Area Chart
+```{r}
+ggplot(df, aes(x = Year, y = Value, fill = Period)) +
+  geom_area()
+```
+
+### Step Chart
+```{r}
+ggplot(df, aes(x = Year, y = Value, group = 1)) +
+  geom_step()
+```
+

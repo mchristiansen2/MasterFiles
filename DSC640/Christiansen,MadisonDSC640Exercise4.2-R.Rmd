@@ -1,0 +1,35 @@
+---
+title: "Christiansen,MadisonDSC640Exercise4.2-R"
+author: "Madison Christiansen"
+date: "2023-07-14"
+output: pdf_document
+---
+
+```{r}
+library(ggplot2) # only need one library
+df <- read.csv(file="/Users/madisonchristiansen/Desktop/costcos-geocoded.csv")
+```
+## Heat Map
+```{r}
+ggplot(df, aes(x = Longitude, y = Latitude, fill = Latitude)) +
+  geom_tile() +
+  scale_fill_gradient(low = "blue", high = "red") + # color gradient 
+  labs(title = "Heat Map of Latitude and Longitude")
+```
+
+## Spatial Chart
+```{r}
+ggplot(df, aes(x = Longitude, y = Latitude, color = State)) + # will look like US
+  geom_point() +
+  labs(title = "Spatial Chart of Latitude and Longitude")
+```
+
+## Lollipop Chart 
+```{r}
+ggplot(df, aes(x = State, y = Latitude)) +
+  geom_segment(aes(xend = State, yend = 0), color = "blue") +
+  geom_point(size = 3, color = "blue", shape = 19) +
+  coord_flip() +
+  labs(title = "Lollipop Chart of Latitude")
+```
+

@@ -1,0 +1,80 @@
+---
+title: "ChristiansenDSC640Exercise1.2R"
+author: "Madison Christiansen"
+date: "2023-06-14"
+output: pdf_document
+---
+## Exercise 1.2 - R
+### 1 bar chart, 1 stacked bar chart, 1 pie chart, 1 donut, and 1 line chart with R
+
+```{r setup}
+library("readxl")
+library(ggplot2)
+library(dplyr)
+
+
+df = read_excel("/Users/madisonchristiansen/desktop/hotdog-contest-winners.xlsm")
+colnames(df)[3] ="dogs"
+
+```
+
+#### Bar Chart
+```{r}
+ggplot(df, aes(x = Winner, y = dogs)) +
+  geom_bar(stat = "identity", fill = "blue") +
+  labs(title = "Number of Hot Dogs Eaten by Winner", x = "Winner", y = "Dogs Eaten")
+```
+#### Stacked Bar Chart
+```{r}
+ggplot(df, aes(x = Winner, y = dogs, fill = Country)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Number of Dogs Eaten by Winner and Country", x = "Winner", y = "Dogs Eaten") +
+  theme(legend.position = "bottom", axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_fill_brewer(palette = "Set3")
+```
+#### Pie Chart
+```{r}
+sum_dogs <- aggregate(dogs ~ Country, df, sum)
+
+# Create pie chart
+ggplot(sum_dogs, aes(x = "", y = dogs, fill = Country)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar("y", start = 0) +
+  labs(title = "Dogs Eaten by Country")
+```
+
+
+#### Donut Chart
+```{r}
+df3 <- data.frame(df$Country,df$dogs)
+df3
+
+df2 <- df3%>%
+      dplyr::mutate( perc = df.dogs/sum(df.dogs)
+                    , ymax = cumsum(perc)
+                    , ymin = ifelse(is.na(lag(ymax)), 0, lag(ymax)))
+df2
+```
+
+```{r}
+
+pl <- ggplot(data = df2 )
+pl <- pl + geom_rect(aes(ymin = ymin, ymax = ymax,fill = df.Country,
+                         xmin= 2, xmax = 4))
+pl <- pl + coord_polar(theta="y")
+pl <- pl +  theme_void() 
+pl <- pl + xlim(c(-1, 4))
+pl <- pl + geom_text(aes(x = 3.5, y = perc ,label = paste0(df.Country,"\n",round(perc*100,1), "%"))
+                         , position = position_stack(vjust = 0.5), size = 2.5)
+pl
+
+```
+
+
+#### Line Chart
+```{r}
+ggplot(df, aes(x = Year, y = dogs)) +
+  geom_line() +
+  labs(title = "Number of Hot Dogs Eaten Over the Years", x = "Year", y = "Dogs Eaten")
+```
+
