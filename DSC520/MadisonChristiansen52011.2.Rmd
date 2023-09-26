@@ -1,0 +1,131 @@
+---
+title: "11.2DSC520"
+author: "Madison Christiansen"
+date: "2023-02-20"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r, include=FALSE}
+setwd("/Users/madisonchristiansen/desktop")
+binaryclass_df <- read.csv(file="binary-classifier-data.csv")
+trinaryclass_df <- read.csv(file="trinary-classifier-data.csv")
+library(ggplot2)
+library(rattle)
+library(class)
+
+```
+
+1. Introduction to Machine Learning
+### i. Plot the data from each dataset using a scatter plot.
+```{r, echo=FALSE, warning=FALSE}
+attach(binaryclass_df)
+plot(x, y, main = "Binary Class" , xlab = "X", ylab = "Y")
+attach(trinaryclass_df)
+plot(x, y, main = "Trinary Class" , xlab = "X", ylab = "Y")
+```
+
+### ii. The k nearest neighbors algorithm categorizes an input value by looking at the labels for the k nearest points and assigning a category based on the most common label. In this problem, you will determine which points are nearest by calculating the Euclidean distance between two points. 
+```{r, echo=FALSE, warning=FALSE}
+# defining the vectors
+binary = binaryclass_df[, c("x", "y")]
+trinary = trinaryclass_df[, c("x", "y")]
+# creating train
+set.seed(150)
+binary_selection <- sample(1:nrow(binary), size=nrow(binary)*0.60, replace = FALSE)
+binary_train <- binaryclass_df[binary_selection,]
+binary_test <- binaryclass_df[-binary_selection,]
+train_binary <- binaryclass_df[binary_selection,1,drop=TRUE]
+test_binary <- binaryclass_df[-binary_selection,1,drop=TRUE]
+nrow(test_binary)
+
+trinary_selection <- sample(1:nrow(trinary), size=nrow(trinary)*0.60, replace = FALSE)
+trinary_train <- trinaryclass_df[trinary_selection,]
+tritrinary_test <- trinaryclass_df[-trinary_selection,]
+trinary_test <- trinaryclass_df[-trinary_selection,]
+train_trinary <- trinaryclass_df[trinary_selection,1,drop=TRUE]
+test_trinary <- trinaryclass_df[-trinary_selection,1,drop=TRUE]
+nrow(test_trinary)
+```
+
+### i. Fitting a model is when you use the input data to create a predictive model. There are various metrics you can use to determine how well your model fits the data. For this problem, you will focus on a single metric, accuracy. Accuracy is simply the percentage of how often the model predicts the correct result. If the model always predicts the correct result, it is 100% accurate. If the model always predicts the incorrect result, it is 0% accurate.
+### ii. Fit a k nearest neighbors’ model for each dataset for k=3, k=5, k=10, k=15, k=20, and k=25. Compute the accuracy of the resulting models for each value of k. Plot the results in a graph where the x-axis is the different values of k and the y-axis is the accuracy of the model.
+```{r, echo=FALSE, warning=FALSE}
+k_binary = list(3,5,10,15,20,25)
+k_trinary = list(3,5,10,15,20,25)
+input = 1
+accuracy = 1
+
+
+for (input in k_binary) {nearest_neighbor <- knn(train = binary_train, test = binary_test, cl=train_binary, k=input)
+  accuracy[input] <- 100*sum(test_binary == nearest_neighbor)/NROW(test_binary)
+  k=input 
+  cat(k,accuracy[input])}
+
+for (input in k_trinary) {nearest_neighbor <- knn(train = trinary_train, test = trinary_test, cl=train_trinary, k=input)
+  accuracy[input] <- 100*sum(test_trinary == nearest_neighbor)/NROW(test_trinary)
+  k=input 
+  cat(k,accuracy[input])}
+
+
+plot(accuracy, type = "b", xlab = "K Nearest", ylab = "Accuracy")
+plot(accuracy, type = "b", xlab = "K Nearest", ylab = "Accuracy")
+```
+
+### i. Looking back at the plots of the data, do you think a linear classifier would work well on these datasets?
+### ii. How does the accuracy of your logistic regression classifier from last week compare?  Why is the accuracy different between these two methods?
+### Yes, linerar classification can be used to classify the data into labels based on the input features. For the binary data the K value increased and the accuracy decreased. For the trinary data the K value value increased as the accuracy decreased.
+
+2. Clustering
+```{r setup, include=FALSE}
+setwd("/Users/madisonchristiansen/desktop")
+clustering_df <- read.csv(file="clustering-data.csv")
+```
+
+### i. Plot the dataset using a scatter plot.
+```{r, echo=FALSE, warning=FALSE}
+ggplot(clustering_df, aes(x=x, y=y)) + geom_point()
+```
+
+### ii. Fit the dataset using the k-means algorithm from k=2 to k=12. Create a scatter plot of the resultant clusters for each value of 
+```{r, echo=FALSE, warning=FALSE}
+cluster_k_fit <- kmeans(clustering_df, 4)
+attributes(cluster_k_fit)
+
+cluster_nearest <- list(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
+cluster_input = 1
+seed = 1234
+nc = 12
+clusterplot <- function(clustering_df, nc=12, seed) + clusters <- (nrow(clustering_df)-1)*sum(apply(clustering_df,2,var))
+clusters <- (nrow(clustering_df)-1)*sum(apply(clustering_df,2,var))
+for (cluster_input in 2:nc) { set.seed(seed) 
+  clusters[cluster_input] <-sum(kmeans(clustering_df, centers = cluster_input)$withinss)}
+# Plot my cluster using the plot function
+plot(1:nc, clusters, type="b", xlab="# of Clusters", ylab="Sum of Squares")
+```
+
+### iii. As k-means is an unsupervised algorithm, you cannot compute the accuracy as there are no correct values to compare the output to. Instead, you will use the average distance from the center of each cluster as a measure of how well the model fits the data. To calculate this metric, simply compute the distance of each data point to the center of the cluster it is assigned to and take the average value of all of those distances.
+
+```{r, echo=FALSE, warning=FALSE}
+# Distance
+cluster_standard <- scale(clustering_df[-1])
+cluster_dist <- dist(cluster_standard)
+cluster_average <- hclust(cluster_dist, method = "average")
+plot(cluster_average, main = 'Average', xlab = "Cluster Distance")
+```
+
+### e. Calculate this average distance from the center of each cluster for each value of k and plot it as a line chart where k is the x-axis and the average distance is the y-axis.
+```{r}
+values = cluster_nearest[2]
+clusteraverage = cluster_average[["order"]]
+averagedf = rbind.data.frame(clusteraverage)
+kvaluesdf = rbind.data.frame(values)
+
+```
+### f. One way of determining the “right” number of clusters is to look at the graph of k versus average distance and finding the “elbow point”. Looking at the graph you generated in the previous example, what is the elbow point for this dataset?
+### This is not the graph I was looking for. Although if I generated the correct one, to calculated the elbow point I would see where the curve bends from a high to low slope or the other direction. 
+
+
+
+

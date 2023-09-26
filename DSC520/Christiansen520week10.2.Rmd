@@ -1,0 +1,63 @@
+---
+title: "DSC520week10Exercise10.2"
+author: "Madison Christiansen"
+date: "2023-02-17"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+library(mlr3oml)
+setwd("/Users/madisonchristiansen/desktop")
+surgery_data = read_arff("ThoraricSurgery.arff")
+library(dplyr)
+library(stats)
+library(ggplot2)
+```
+
+# i. Binary Logistic Regression Model - Predicts whether or not the patient survived for one year after the surgery.
+```{r}
+# visualize data
+ggplot(surgery_data, aes(Risk1Yr, AGE)) + geom_point()
+# regression model
+surgerydata_glm = glm(Risk1Yr ~ PRE4 + PRE5 + PRE6 + PRE7 + PRE8 + PRE9 + PRE10 + PRE11 + PRE14 + PRE17 + PRE19 + PRE25 + PRE30 + PRE32, data = surgery_data, family= binomial())
+#summary
+summary(surgerydata_glm)
+```
+##  ii. Which variables had the greatest effect on the survival rate?
+## When looking at the coefficients you can see that they are associated with a p-values, if that value is <0.05 there is a statistical significance. When looking at the summary of the binary logistic regression model you can determine that the variable which had the greatest effect on the survival rate is PRE9 and PRE17 with the p-value being around 0.01.
+
+# iii. Predict the Outcome Variable
+```{r}
+# column of probability of Risk1Yr based on model
+surgery_data$predicted_prob<-fitted(surgerydata_glm) 
+# TRUE/FALSE predictions based on probability scores above .25
+surgery_data$predictionTF<-if_else(surgery_data$predicted_prob > .25, TRUE, FALSE)
+# probability threshold and compare model outcome with actual values
+surg_matrix <- table(actual_value = surgery_data$Risk1Yr, PredictionLabel = surgery_data$predictionTF)
+surg_matrix
+# accuracy
+(surg_matrix[[1,1]] + surg_matrix [[2,2]]) / sum(surg_matrix)
+```
+## What is the accuracy of your model?
+## Looking at the probability based on the model and the choosen threshold, the model shows about 84% accuracy. 
+
+# Fit a Logistic Regression Model to the Binary-Classifier-Data
+```{r}
+binary_class = read.csv("binary-classifier-data.csv")
+binary_class_glm = glm(label ~ x+y, data = binary_class, family = binomial())
+binary_class_glm
+```
+## What is the accuracy of the logistic regression classifier?
+```{r}
+binary_class$pred_prob <-fitted(binary_class_glm)
+binary_class$pred_label<-if_else(binary_class$pred_prob >= .50, 1, 0)
+bc_matrix <- table(Actual_Label = binary_class$label, Predicted_Label = binary_class$pred_label)
+bc_matrix
+# accuracy
+(bc_matrix[[1,1]] + bc_matrix[[2,2]]) / sum(bc_matrix)
+```
+
+## The accuracy of this model at a threshold of 0.55 is about 55%, meaning it is not a linear relationship.
+
